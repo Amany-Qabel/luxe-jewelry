@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر المجوهرات | LUXE JEWELRY</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- الهيدر وشريط التنقل -->
+    <header class="header">
+        <div class="logo">
+            <h1>LUXE JEWELRY</h1>
+        </div>
+        
+        <nav class="nav-links">
+            <a href="#" onclick="filterProducts('all')">الرئيسية</a>
+            <a href="#" onclick="filterProducts('خاتم')">الخواتم</a>
+            <a href="#" onclick="filterProducts('سلسلة')">السلاسل</a>
+            <a href="#" onclick="filterProducts('أسورة')">الأساور</a>
+        </nav>
+
+        <div class="cart-btn-container">
+            <button class="cart-btn" onclick="toggleCart()">
+                🛒 السلة (<span id="cart-count">0</span>)
+            </button>
+        </div>
+    </header>
+
+    <!-- القسم الرئيسي للترحيب -->
+    <section class="hero-section">
+        <h2>أناقة تليق بكِ</h2>
+        <p>اكتشفي أحدث تشكيلة من المجوهرات والإكسسوارات الفاخرة</p>
+    </section>
+
+    <!-- معارض المنتجات -->
+    <main class="main-content">
+        <h2 class="section-title">أحدث القطع</h2>
+        <div id="products-container" class="products-grid">
+            <!-- سيتم تحميل كروت المنتجات هنا ديناميكياً بواسطة script.js -->
+        </div>
+    </main>
+
+    <!-- نافذة سلة الشراء ونموذج إتمام الطلب -->
+    <div id="cart-modal" class="cart-modal" style="display: none;">
+        <div class="cart-content">
+            <span class="close-btn" onclick="toggleCart()">&times;</span>
+            <h3>سلة الشراء</h3>
+            
+            <!-- قائمة العناصر المضافة للسلة -->
+            <div id="cart-items">
+                <p class="empty-msg">السلة فارغة حالياً</p>
+            </div>
+            
+            <div class="cart-summary" style="margin-top: 15px; font-weight: bold; font-size: 1.1rem;">
+                <strong>الإجمالي: </strong><span id="cart-total" style="color: #d4af37;">0 ج.م</span>
+            </div>
+
+            <!-- نموذج إدخال بيانات الشحن -->
+            <div id="checkout-section" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                <h4 style="margin-bottom: 10px;">بيانات الشحن لإتمام الطلب:</h4>
+                <input type="text" id="client-name" placeholder="الاسم بالكامل" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px;" required>
+                <input type="tel" id="client-phone" placeholder="رقم الهاتف" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px;" required>
+                <input type="text" id="client-address" placeholder="العنوان التفصيلي" style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;" required>
+                
+                <button onclick="checkout()" style="width: 100%; background: #27ae60; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold;">تأكيد وإتمام الطلب</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ربط ملف الـ JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

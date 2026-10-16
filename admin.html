@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | LUXE JEWELRY</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-container { max-width: 1000px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
+        .admin-btn { background: #d4af37; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .admin-btn:hover { background: #b89528; }
+        .orders-table, .products-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .orders-table th, .orders-table td, .products-table th, .products-table td { border: 1px solid #eee; padding: 10px; text-align: center; }
+        .orders-table th, .products-table th { background: #f8f6f0; }
+        .del-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo"><h1>LUXE JEWELRY - لوحة التحكم</h1></div>
+        <a href="index.html" style="text-decoration: none; color: #333; font-weight: bold;">العودة للمتجر 🛒</a>
+    </header>
+
+    <div class="admin-container">
+        <h2>إضافة منتج جديد</h2>
+        <form id="add-product-form" onsubmit="handleAddProduct(event)">
+            <div class="form-group">
+                <label>اسم القطعة:</label>
+                <input type="text" id="prod-name" required>
+            </div>
+            <div class="form-group">
+                <label>القسم:</label>
+                <select id="prod-category" required>
+                    <option value="خاتم">خاتم</option>
+                    <option value="سلسلة">سلسلة</option>
+                    <option value="أسورة">أسورة</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>السعر (ج.م):</label>
+                <input type="number" id="prod-price" required>
+            </div>
+            <div class="form-group">
+                <label>الوصف:</label>
+                <textarea id="prod-desc" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label>رابط الصورة المباشر:</label>
+                <input type="text" id="prod-image" placeholder="http://localhost:5000/images/gold/gold1.jpg.jpg" required>
+            </div>
+            <button type="submit" class="admin-btn">حفظ وإضافة المنتج</button>
+        </form>
+
+        <hr style="margin: 40px 0;">
+
+        <h2>قائمة المنتجات الحالية</h2>
+        <table class="products-table">
+            <thead>
+                <tr>
+                    <th>الصورة</th>
+                    <th>الاسم</th>
+                    <th>القسم</th>
+                    <th>السعر</th>
+                    <th>إجراء</th>
+                </tr>
+            </thead>
+            <tbody id="products-list-admin"></tbody>
+        </table>
+
+        <hr style="margin: 40px 0;">
+
+        <h2>طلبات العملاء الواردة</h2>
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>اسم العميل</th>
+                    <th>رقم الهاتف</th>
+                    <th>العنوان</th>
+                    <th>القطع المطلوبة</th>
+                    <th>الإجمالي</th>
+                    <th>التاريخ</th>
+                </tr>
+            </thead>
+            <tbody id="orders-list-admin"></tbody>
+        </table>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
