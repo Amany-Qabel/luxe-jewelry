@@ -4,7 +4,7 @@ let cart = [];
 // 1. جلب المنتجات من السيرفر (Back-End API)
 async function fetchProducts() {
     try {
-        const response = await fetch('http://localhost:5000/api/products');
+       const API_URL = 'https://luxe-jewelry-yourname.koyeb.app/api';
         allProducts = await response.json();
         
         console.log('المنتجات القادمة من قاعدة البيانات:', allProducts);

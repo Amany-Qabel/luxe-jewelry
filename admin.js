@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://luxe-jewelry-yourname.koyeb.app/api';
 
 // جلب المنتجات والطلبات فور فتح الصفحة
 document.addEventListener('DOMContentLoaded', () => {
