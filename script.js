@@ -1,10 +1,10 @@
 let allProducts = [];
 let cart = [];
 
-// 1. جلب المنتجات من السيرفر (Back-End API) أو عرض منتجات تجريبية احتياطية
+// 1. جلب المنتجات أو عرض البيانات الاحتياطية
 async function fetchProducts() {
     try {
-        const API_URL = 'https://luxe-jewelry-yourname.koyeb.app/api/products'; // تأكد من المسار الصحيح للـ API
+        const API_URL = 'https://luxe-jewelry-yourname.koyeb.app/api/products';
         const response = await fetch(API_URL);
         
         if (!response.ok) {
@@ -12,12 +12,11 @@ async function fetchProducts() {
         }
         
         allProducts = await response.json();
-        console.log('المنتجات القادمة من قاعدة البيانات:', allProducts);
         displayProducts(allProducts);
     } catch (error) {
-        console.error('حدث خطأ أثناء جلب المنتجات، سيتم استخدام البيانات المحلية:', error);
+        console.log('استخدام البيانات المحلية الاحتياطية:', error);
         
-        // بيانات تجريبية احتياطية (Fallback) لضمان ظهور المنتجات والصور فوراً على جيت هاب
+        // بيانات تجريبية تظهر فوراً
         allProducts = [
             {
                 _id: '1',
@@ -25,7 +24,7 @@ async function fetchProducts() {
                 description: 'خاتم مرصع بفصوص الزريكون البراقة',
                 price: 1500,
                 category: 'خاتم',
-                image: 'images/ring1.jpg' // تأكد من اسم ومجلد الصور لديك
+                image: 'images/ring1.jpg'
             },
             {
                 _id: '2',
@@ -69,7 +68,7 @@ function displayProducts(products) {
     `).join('');
 }
 
-// 3. تصفية المنتجات حسب القسم (الخواتم، السلاسل، الأساور)
+// 3. تصفية المنتجات حسب القسم
 function filterProducts(category) {
     if (category === 'all') {
         displayProducts(allProducts);
@@ -85,7 +84,6 @@ function filterProducts(category) {
 function toggleCart() {
     const cartModal = document.getElementById('cart-modal');
     if (cartModal) {
-        cartModal.classList.toggle('active');
         if (cartModal.style.display === 'flex') {
             cartModal.style.display = 'none';
         } else {
@@ -139,5 +137,5 @@ function updateCartUI() {
     }
 }
 
-// تشغيل جلب المنتجات فور تحميل الصفحة
+// تشغيل الكود فور تحميل الصفحة
 document.addEventListener('DOMContentLoaded', fetchProducts);
