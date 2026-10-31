@@ -38,38 +38,94 @@
     <main class="main-content">
         <h2 class="section-title">أحدث القطع</h2>
         <div id="products-container" class="products-grid">
-            <!-- سيتم تحميل كروت المنتجات هنا ديناميكياً بواسطة script.js -->
+            <!-- المنتجات ستظهر هنا فوراً -->
         </div>
     </main>
 
-    <!-- نافذة سلة الشراء ونموذج إتمام الطلب -->
+    <!-- نافذة سلة الشراء -->
     <div id="cart-modal" class="cart-modal" style="display: none;">
         <div class="cart-content">
             <span class="close-btn" onclick="toggleCart()">&times;</span>
             <h3>سلة الشراء</h3>
-            
-            <!-- قائمة العناصر المضافة للسلة -->
             <div id="cart-items">
                 <p class="empty-msg">السلة فارغة حالياً</p>
             </div>
-            
             <div class="cart-summary" style="margin-top: 15px; font-weight: bold; font-size: 1.1rem;">
                 <strong>الإجمالي: </strong><span id="cart-total" style="color: #d4af37;">0 ج.م</span>
-            </div>
-
-            <!-- نموذج إدخال بيانات الشحن -->
-            <div id="checkout-section" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-                <h4 style="margin-bottom: 10px;">بيانات الشحن لإتمام الطلب:</h4>
-                <input type="text" id="client-name" placeholder="الاسم بالكامل" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px;" required>
-                <input type="tel" id="client-phone" placeholder="رقم الهاتف" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px;" required>
-                <input type="text" id="client-address" placeholder="العنوان التفصيلي" style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;" required>
-                
-                <button onclick="checkout()" style="width: 100%; background: #27ae60; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold;">تأكيد وإتمام الطلب</button>
             </div>
         </div>
     </div>
 
-    <!-- ربط ملف الـ JavaScript -->
-    <script src="script.js"></script>
+    <!-- كود JavaScript المباشر بدون أخطاء ملفات خارجية -->
+    <script>
+        const allProducts = [
+            {
+                _id: '1',
+                name: 'خاتم ألماس فاخر',
+                description: 'خاتم مرصع بفصوص الزريكون البراقة',
+                price: 1500,
+                category: 'خاتم',
+                image: 'images/ring1.jpg'
+            },
+            {
+                _id: '2',
+                name: 'سلسلة ذهبية أنيقة',
+                description: 'سلسلة مميزة بتصميم عصري راقي',
+                price: 2200,
+                category: 'سلسلة',
+                image: 'images/necklace1.jpg'
+            },
+            {
+                _id: '3',
+                name: 'أسورة لؤلؤ',
+                description: 'أسورة أنيقة تناسب السهرات والمناسبات',
+                price: 1200,
+                category: 'أسورة',
+                image: 'images/bracelet1.jpg'
+            }
+        ];
+
+        let cart = [];
+
+        function displayProducts(products) {
+            const container = document.getElementById('products-container');
+            if (!container) return;
+            
+            container.innerHTML = products.map(p => `
+                <div class="product-card" style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; text-align: center; background: #fff;">
+                    <img src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/250?text=LUXE+JEWELRY'" style="width: 100%; height: 200px; object-fit: cover; border-radius: 6px;">
+                    <h3 style="margin: 10px 0;">${p.name}</h3>
+                    <p style="color: #666; font-size: 0.9rem;">${p.description}</p>
+                    <span class="price" style="color: #d4af37; font-weight: bold; display: block; margin: 10px 0;">${p.price} ج.م</span>
+                    <button onclick="addToCart('${p._id}')" style="background: #27ae60; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">إضافة للسلة</button>
+                </div>
+            `).join('');
+        }
+
+        function filterProducts(cat) {
+            if (cat === 'all') {
+                displayProducts(allProducts);
+            } else {
+                displayProducts(allProducts.filter(p => p.category === cat));
+            }
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function addToCart(id) {
+            const p = allProducts.find(item => item._id === id);
+            if (p) {
+                cart.push(p);
+                document.getElementById('cart-count').innerText = cart.length;
+                document.getElementById('cart-total').innerText = cart.reduce((sum, item) => sum + item.price, 0) + ' ج.م';
+                document.getElementById('cart-items').innerHTML = cart.map(item => `<div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>${item.name}</span><span>${item.price} ج.م</span></div>`).join('');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => displayProducts(allProducts));
+    </script>
 </body>
 </html>
