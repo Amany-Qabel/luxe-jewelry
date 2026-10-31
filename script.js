@@ -1,16 +1,50 @@
 let allProducts = [];
 let cart = [];
 
-// 1. جلب المنتجات من السيرفر (Back-End API)
+// 1. جلب المنتجات من السيرفر (Back-End API) أو عرض منتجات تجريبية احتياطية
 async function fetchProducts() {
     try {
-       const API_URL = 'https://luxe-jewelry-yourname.koyeb.app/api';
-        allProducts = await response.json();
+        const API_URL = 'https://luxe-jewelry-yourname.koyeb.app/api/products'; // تأكد من المسار الصحيح للـ API
+        const response = await fetch(API_URL);
         
+        if (!response.ok) {
+            throw new Error('فشل الاتصال بالسيرفر');
+        }
+        
+        allProducts = await response.json();
         console.log('المنتجات القادمة من قاعدة البيانات:', allProducts);
         displayProducts(allProducts);
     } catch (error) {
-        console.error('حدث خطأ أثناء جلب المنتجات:', error);
+        console.error('حدث خطأ أثناء جلب المنتجات، سيتم استخدام البيانات المحلية:', error);
+        
+        // بيانات تجريبية احتياطية (Fallback) لضمان ظهور المنتجات والصور فوراً على جيت هاب
+        allProducts = [
+            {
+                _id: '1',
+                name: 'خاتم ألماس فاخر',
+                description: 'خاتم مرصع بفصوص الزريكون البراقة',
+                price: 1500,
+                category: 'خاتم',
+                image: 'images/ring1.jpg' // تأكد من اسم ومجلد الصور لديك
+            },
+            {
+                _id: '2',
+                name: 'سلسلة ذهبية أنيقة',
+                description: 'سلسلة مميزة بتصميم عصري راقي',
+                price: 2200,
+                category: 'سلسلة',
+                image: 'images/necklace1.jpg'
+            },
+            {
+                _id: '3',
+                name: 'أسورة لؤلؤ',
+                description: 'أسورة أنيقة تناسب السهرات والمناسبات',
+                price: 1200,
+                category: 'أسورة',
+                image: 'images/bracelet1.jpg'
+            }
+        ];
+        displayProducts(allProducts);
     }
 }
 
@@ -19,14 +53,14 @@ function displayProducts(products) {
     const productsContainer = document.getElementById('products-container');
     if (!productsContainer) return;
 
-    if (products.length === 0) {
+    if (!products || products.length === 0) {
         productsContainer.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">لا توجد منتجات متوفرة في هذا القسم حالياً.</p>';
         return;
     }
 
     productsContainer.innerHTML = products.map(product => `
         <div class="product-card">
-            <img src="${product.image}" alt="${product.name}">
+            <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/250?text=LUXE+JEWELRY'">
             <h3>${product.name}</h3>
             <p>${product.description || ''}</p>
             <span class="price">${product.price} ج.م</span>
@@ -107,4 +141,3 @@ function updateCartUI() {
 
 // تشغيل جلب المنتجات فور تحميل الصفحة
 document.addEventListener('DOMContentLoaded', fetchProducts);
-script.js
