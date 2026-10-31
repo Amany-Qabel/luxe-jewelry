@@ -56,7 +56,7 @@
         </div>
     </div>
 
-    <!-- كود JavaScript مع مسارات الصور الصحيحة 100% -->
+    <!-- كود JavaScript سليم ومنظم -->
     <script>
         const allProducts = [
             {
@@ -65,7 +65,7 @@
                 description: 'خاتم مرصع بفصوص الزريكون البراقة',
                 price: 1500,
                 category: 'خاتم',
-                image: 'images/gold/gold1.jpg' // امتداد .jpg الصحيح
+                image: 'images/gold/gold1.jpg'
             },
             {
                 _id: '2',
@@ -73,7 +73,7 @@
                 description: 'سلسلة مميزة بتصميم عصري راقي',
                 price: 2200,
                 category: 'سلسلة',
-                image: 'images/chain/chain1.jpg' // امتداد .jpg الصحيح
+                image: 'images/chain/chain1.jpg'
             },
             {
                 _id: '3',
@@ -81,7 +81,7 @@
                 description: 'أسورة أنيقة تناسب السهرات والمناسبات',
                 price: 1200,
                 category: 'أسورة',
-                image: 'images/bracelet/bracelet1.jpg' // امتداد .jpg الصحيح
+                image: 'images/bracelet/bracelet1.jpg'
             }
         ];
 
@@ -112,16 +112,29 @@
 
         function toggleCart() {
             const modal = document.getElementById('cart-modal');
-            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+            if (modal) {
+                modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+            }
         }
 
         function addToCart(id) {
             const p = allProducts.find(item => item._id === id);
             if (p) {
                 cart.push(p);
-                document.getElementById('cart-count').innerText = cart.length;
-                document.getElementById('cart-total').innerText = cart.reduce((sum, item) => sum + item.price, 0) + ' ج.م';
-                document.getElementById('cart-items').innerHTML = cart.map(item => `<div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>${item.name}</span><span>${item.price} ج.م</span></div>`).join('');
+                const countElem = document.getElementById('cart-count');
+                const totalElem = document.getElementById('cart-total');
+                const itemsElem = document.getElementById('cart-items');
+
+                if (countElem) countElem.innerText = cart.length;
+                if (totalElem) totalElem.innerText = cart.reduce((sum, item) => sum + item.price, 0) + ' ج.م';
+                if (itemsElem) {
+                    itemsElem.innerHTML = cart.map(item => `
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            <span>${item.name}</span>
+                            <span>${item.price} ج.م</span>
+                        </div>
+                    `).join('');
+                }
             }
         }
 
