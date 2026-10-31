@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// تخزين الاتصال لضمان عدم تكرار الاتصال في البيئة السحابية Serverless
+// تخزين الاتصال لضمان الأداء السريع على Vercel
 let cachedDb = null;
 
 const connectDB = async () => {
@@ -16,21 +16,19 @@ const connectDB = async () => {
     return cachedDb;
   }
   
-  // الانتظار الفعلي لاكتمال الاتصال
-  cachedDb = await mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+  // الاتصال بقاعدة البيانات بدون خيارات قديمة غير مدعومة
+  cachedDb = await mongoose.connect(process.env.MONGO_URI);
   console.log("MongoDB Connected Successfully");
   return cachedDb;
 };
 
-// مسار الـ Seed لتعبئة البيانات مع ضمان الانتظار المباشر
+// مسار الـ Seed لتعبئة البيانات مع ضمان اكتمال الاتصال أولاً
 app.get('/api/seed', async (req, res) => {
   try {
-    await connectDB(); // سيرفر Vercel سينتظر الاتصال هنا حتى ينتهي 100%
+    await connectDB(); // الانتظار حتى يكتمل الاتصال بقاعدة البيانات 100%
     
-    // إذا كان لديكِ نموذج للمنتجات تريدين تعبئته استدعيه هنا
+    // يمكنك إضافة كود تعبئة المنتجات هنا لاحقاً
+    
     res.json({ message: "تمت إضافة المنتجات بنجاح!" });
   } catch (error) {
     console.error("Seed error:", error);
