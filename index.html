@@ -72,8 +72,8 @@
         // رابط السيرفر والـ API الخاص بكِ على Vercel
         const API_BASE_URL = 'https://amany-jewelry.vercel.app/api';
         
-        // رقم هاتفك المخصص لاستقبال الطلبات
-        const YOUR_WHATSAPP_NUMBER = "201097670046"; 
+        // رقم الهاتف الجديد لاستقبال الطلبات
+        const YOUR_WHATSAPP_NUMBER = "201000348794"; 
 
         const allProducts = [
             { _id: '1', name: 'أسورة لؤلؤ فاخرة', description: 'أسورة أنيقة تناسب السهرات والمناسبات', price: 1200, category: 'أسورة', image: 'images/bracelet/bracelet1.jpg' },
@@ -198,7 +198,7 @@
                 updateCartUI();
                 toggleCart();
 
-                // الانتقال المباشر للواتساب لتجاوز حظر النوافذ المنبثقة
+                // الانتقال المباشر للواتساب
                 window.location.href = whatsappUrl;
 
             } catch (error) {
