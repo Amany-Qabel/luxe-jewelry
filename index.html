@@ -67,10 +67,13 @@
         </div>
     </div>
 
-    <!-- كود JavaScript التفاعلي والمرتبط بالباك إند -->
+    <!-- كود JavaScript التفاعلي والمرتبط بالباك إند والواتساب -->
     <script>
         // رابط السيرفر والـ API الخاص بكِ على Vercel
         const API_BASE_URL = 'https://amany-jewelry.vercel.app/api';
+        
+        // ⚠️ ضعي رقم هاتفك هنا بالصيغة الدولية (مثلاً لمصر: 2010xxxxxxxx)
+        const YOUR_WHATSAPP_NUMBER = "201097670046"; 
 
         const allProducts = [
             { _id: '1', name: 'أسورة لؤلؤ فاخرة', description: 'أسورة أنيقة تناسب السهرات والمناسبات', price: 1200, category: 'أسورة', image: 'images/bracelet/bracelet1.jpg' },
@@ -143,7 +146,7 @@
             }
         }
 
-        // دالة تجميع البيانات واستدعاء الـ API عند إتمام الشراء
+        // دالة جمع البيانات والتحقق من إدخالها
         async function handleCheckout() {
             if (cart.length === 0) {
                 alert('السلة فارغة!');
@@ -163,32 +166,48 @@
             await submitOrder(cart, customerDetails);
         }
 
-        // دالة الاتصال بالباك إند عبر POST Request
+        // دالة إرسال الطلب للسيرفر وفتح الواتساب بالرسالة الجاهزة
         async function submitOrder(cartItems, customerDetails) {
             try {
-                const response = await fetch(`${API_BASE_URL}/orders`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        items: cartItems,
-                        customer: customerDetails
-                    })
+                // 1. تجهيز تفاصيل المنتجات والإجمالي
+                let itemsListText = "";
+                let totalPrice = 0;
+
+                cartItems.forEach((item, index) => {
+                    itemsListText += `${index + 1}. ${item.name} - ${item.price} ج.م\n`;
+                    totalPrice += item.price;
                 });
 
-                const data = await response.json();
-                if (response.ok) {
-                    alert('تم إرسال طلبك بنجاح! وسنتواصل معك قريباً.');
-                    cart = [];
-                    updateCartUI();
-                    toggleCart();
-                } else {
-                    alert('حدث خطأ أثناء إرسال الطلب: ' + (data.message || 'خطأ بالسيرفر'));
-                }
+                // 2. تصميم رسالة الواتساب المرتبة
+                const message = `✨ *طلب جديد من متجر LUXE JEWELRY* ✨\n\n` +
+                                `👤 *اسم العميل:* ${customerDetails.name}\n` +
+                                `📱 *رقم الهاتف:* ${customerDetails.phone}\n` +
+                                `📍 *العنوان:* ${customerDetails.address}\n\n` +
+                                `🛍️ *المنتجات المطلوبة:*\n${itemsListText}\n` +
+                                `💰 *الإجمالي:* ${totalPrice} ج.م\n\n` +
+                                `يرجى تأكيد الطلب وتحديد موعد التوصيل! ❤️`;
+
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappUrl = `https://wa.me/${YOUR_WHATSAPP_NUMBER}?text=${encodedMessage}`;
+
+                // 3. إرسال الطلب للخلفية (Vercel & MongoDB) في الخلفية لتسجيله
+                fetch(`${API_BASE_URL}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: cartItems, customer: customerDetails })
+                }).catch(err => console.log("خطأ في التخزين المؤقت للسيرفر:", err));
+
+                // 4. فتح تطبيق الواتساب بالرسالة الجاهزة
+                window.open(whatsappUrl, '_blank');
+
+                alert('جاري توجيهك إلى الواتساب لإتمام إرسال الطلب! 🚀');
+                cart = [];
+                updateCartUI();
+                toggleCart();
+
             } catch (error) {
-                console.error('فشل الاتصال بالسيرفر:', error);
-                alert('تعذر الاتصال بالسيرفر. يرجى المحاولة لاحقاً.');
+                console.error('حدث خطأ:', error);
+                alert('حدث خطأ، يرجى المحاولة مرة أخرى.');
             }
         }
 
