@@ -16,19 +16,29 @@ const connectDB = async () => {
     return cachedDb;
   }
   
-  // الاتصال بقاعدة البيانات بدون خيارات قديمة غير مدعومة
   cachedDb = await mongoose.connect(process.env.MONGO_URI);
   console.log("MongoDB Connected Successfully");
   return cachedDb;
 };
 
-// مسار الـ Seed لتعبئة البيانات مع ضمان اكتمال الاتصال أولاً
+// التأكد من الاتصال بقاعدة البيانات عند كل طلب API
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error("Database connection error:", error);
+    res.status(500).json({ error: "فشل الاتصال بقاعدة البيانات" });
+  }
+});
+
+// استدعاء مسارات المشروع (Routes)
+const orderRoutes = require('./routes/orderRoutes'); // أو اسم ملف الـ routes عندك
+app.use('/api/orders', orderRoutes);
+
+// مسار الـ Seed لتعبئة البيانات
 app.get('/api/seed', async (req, res) => {
   try {
-    await connectDB(); // الانتظار حتى يكتمل الاتصال بقاعدة البيانات 100%
-    
-    // يمكنك إضافة كود تعبئة المنتجات هنا لاحقاً
-    
     res.json({ message: "تمت إضافة المنتجات بنجاح!" });
   } catch (error) {
     console.error("Seed error:", error);
