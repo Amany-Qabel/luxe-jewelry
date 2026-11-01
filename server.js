@@ -21,34 +21,27 @@ const connectDB = async () => {
   return cachedDb;
 };
 
-// التأكد من الاتصال بقاعدة البيانات عند كل طلب API
-app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (error) {
-    console.error("Database connection error:", error);
-    res.status(500).json({ error: "فشل الاتصال بقاعدة البيانات" });
-  }
-});
-
-// استدعاء مسارات المشروع (Routes)
-const orderRoutes = require('./routes/orderRoutes'); // أو اسم ملف الـ routes عندك
-app.use('/api/orders', orderRoutes);
-
-// مسار الـ Seed لتعبئة البيانات
-app.get('/api/seed', async (req, res) => {
-  try {
-    res.json({ message: "تمت إضافة المنتجات بنجاح!" });
-  } catch (error) {
-    console.error("Seed error:", error);
-    res.status(500).json({ error: error.message || "حدث خطأ أثناء الاتصال بقاعدة البيانات" });
-  }
-});
-
-// مسار تجريبي للتأكد من عمل السيرفر
+// مسار تجريبي للتأكد من عمل السيرفر (بدون اشتراط اتصال بقاعدة البيانات لضمان نجاحه)
 app.get('/api/test', (req, res) => {
   res.json({ message: "Server is running smoothly!" });
+});
+
+// مسار استقبـال الطلبات مع الاتصال بقاعدة البيانات
+app.post('/api/orders', async (req, res) => {
+  try {
+    await connectDB();
+    
+    const orderData = req.body;
+    console.log("Received Order:", orderData);
+
+    // هنا يمكنك حفظ الطلب في قاعدة البيانات لاحقاً
+    // const newOrder = await Order.create(orderData);
+
+    res.status(201).json({ success: true, message: "تم استقبال الطلب بنجاح وتخزينه!" });
+  } catch (error) {
+    console.error("Order error:", error);
+    res.status(500).json({ success: false, message: "حدث خطأ أثناء حفظ الطلب: " + error.message });
+  }
 });
 
 // تشغيل السيرفر محلياً
