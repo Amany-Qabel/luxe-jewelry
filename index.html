@@ -72,7 +72,7 @@
         // رابط السيرفر والـ API الخاص بكِ على Vercel
         const API_BASE_URL = 'https://amany-jewelry.vercel.app/api';
         
-        // ⚠️ ضعي رقم هاتفك هنا بالصيغة الدولية (مثلاً لمصر: 2010xxxxxxxx)
+        // رقم هاتفك المخصص لاستقبال الطلبات
         const YOUR_WHATSAPP_NUMBER = "201097670046"; 
 
         const allProducts = [
@@ -146,7 +146,6 @@
             }
         }
 
-        // دالة جمع البيانات والتحقق من إدخالها
         async function handleCheckout() {
             if (cart.length === 0) {
                 alert('السلة فارغة!');
@@ -166,10 +165,8 @@
             await submitOrder(cart, customerDetails);
         }
 
-        // دالة إرسال الطلب للسيرفر وفتح الواتساب بالرسالة الجاهزة
         async function submitOrder(cartItems, customerDetails) {
             try {
-                // 1. تجهيز تفاصيل المنتجات والإجمالي
                 let itemsListText = "";
                 let totalPrice = 0;
 
@@ -178,7 +175,6 @@
                     totalPrice += item.price;
                 });
 
-                // 2. تصميم رسالة الواتساب المرتبة
                 const message = `✨ *طلب جديد من متجر LUXE JEWELRY* ✨\n\n` +
                                 `👤 *اسم العميل:* ${customerDetails.name}\n` +
                                 `📱 *رقم الهاتف:* ${customerDetails.phone}\n` +
@@ -190,20 +186,20 @@
                 const encodedMessage = encodeURIComponent(message);
                 const whatsappUrl = `https://wa.me/${YOUR_WHATSAPP_NUMBER}?text=${encodedMessage}`;
 
-                // 3. إرسال الطلب للخلفية (Vercel & MongoDB) في الخلفية لتسجيله
+                // إرسال الطلب للسيرفر في الخلفية للتسجيل
                 fetch(`${API_BASE_URL}/orders`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ items: cartItems, customer: customerDetails })
-                }).catch(err => console.log("خطأ في التخزين المؤقت للسيرفر:", err));
+                }).catch(err => console.log("خطأ في السيرفر:", err));
 
-                // 4. فتح تطبيق الواتساب بالرسالة الجاهزة
-                window.open(whatsappUrl, '_blank');
-
-                alert('جاري توجيهك إلى الواتساب لإتمام إرسال الطلب! 🚀');
+                // تنظيف السلة وإغلاق النافذة
                 cart = [];
                 updateCartUI();
                 toggleCart();
+
+                // الانتقال المباشر للواتساب لتجاوز حظر النوافذ المنبثقة
+                window.location.href = whatsappUrl;
 
             } catch (error) {
                 console.error('حدث خطأ:', error);
