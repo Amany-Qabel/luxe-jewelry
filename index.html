@@ -38,13 +38,13 @@
     <main class="main-content">
         <h2 class="section-title">أحدث القطع</h2>
         <div id="products-container" class="products-grid">
-            <!-- المنتجات ستظهر هنا فوراً -->
+            <!-- المنتجات ستظهر هنا -->
         </div>
     </main>
 
-    <!-- نافذة سلة الشراء -->
+    <!-- نافذة سلة الشراء وإرسال الطلب -->
     <div id="cart-modal" class="cart-modal" style="display: none;">
-        <div class="cart-content">
+        <div class="cart-content" style="max-width: 500px; width: 90%;">
             <span class="close-btn" onclick="toggleCart()">&times;</span>
             <h3>سلة الشراء</h3>
             <div id="cart-items">
@@ -53,81 +53,33 @@
             <div class="cart-summary" style="margin-top: 15px; font-weight: bold; font-size: 1.1rem;">
                 <strong>الإجمالي: </strong><span id="cart-total" style="color: #d4af37;">0 ج.م</span>
             </div>
+
+            <!-- نموذج إدخال بيانات العميل لإتمام الطلب -->
+            <hr style="margin: 15px 0;">
+            <h4>بيانات الطلب</h4>
+            <input type="text" id="cust-name" placeholder="الاسم بالكامل" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            <input type="text" id="cust-phone" placeholder="رقم الهاتف" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            <input type="text" id="cust-address" placeholder="العنوان" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px;">
+
+            <button onclick="handleCheckout()" style="width: 100%; background: #d4af37; color: white; border: none; padding: 10px; font-weight: bold; border-radius: 4px; cursor: pointer;">
+                تأكيد وإرسال الطلب
+            </button>
         </div>
     </div>
 
-    <!-- كود JavaScript يتضمن تشكيلة كاملة من المنتجات -->
+    <!-- كود JavaScript التفاعلي والمرتبط بالباك إند -->
     <script>
-        const allProducts = [
-            // قسم الأساور
-            {
-                _id: '1',
-                name: 'أسورة لؤلؤ فاخرة',
-                description: 'أسورة أنيقة تناسب السهرات والمناسبات',
-                price: 1200,
-                category: 'أسورة',
-                image: 'images/bracelet/bracelet1.jpg'
-            },
-            {
-                _id: '2',
-                name: 'أسورة ذهبية عصرية',
-                description: 'تصميم أنيق مرصع بأحجار كريمة',
-                price: 1350,
-                category: 'أسورة',
-                image: 'images/bracelet/bracelet2.jpg'
-            },
-            {
-                _id: '3',
-                name: 'أسورة ملكية',
-                description: 'لمسة فاخرة لإطلالة مميزة',
-                price: 1600,
-                category: 'أسورة',
-                image: 'images/bracelet/bracelet3.jpg'
-            },
-            
-            // قسم السلاسل
-            {
-                _id: '4',
-                name: 'سلسلة ذهبية أنيقة',
-                description: 'سلسلة مميزة بتصميم عصري راقي',
-                price: 2200,
-                category: 'سلسلة',
-                image: 'images/chain/chain1.jpg'
-            },
-            {
-                _id: '5',
-                name: 'سلسلة رقيقة بدلاية',
-                description: 'سلسلة ناعمة يومية تناسب كل الأوقات',
-                price: 1900,
-                category: 'سلسلة',
-                image: 'images/chain/chain2.jpg'
-            },
-            {
-                _id: '6',
-                name: 'سلسلة كلاسيكية',
-                description: 'تصميم فاخر من الذهب الخالص',
-                price: 2500,
-                category: 'سلسلة',
-                image: 'images/chain/chain3.jpg'
-            },
+        // رابط السيرفر والـ API الخاص بكِ على Vercel
+        const API_BASE_URL = 'https://amany-jewelry.vercel.app/api';
 
-            // قسم الخواتم
-            {
-                _id: '7',
-                name: 'خاتم ألماس فاخر',
-                description: 'خاتم مرصع بفصوص الزريكون البراقة',
-                price: 1500,
-                category: 'خاتم',
-                image: 'images/gold/gold1.jpg'
-            },
-            {
-                _id: '8',
-                name: 'خاتم ذهبي كلاسيك',
-                description: 'خاتم أنيق بتصميم ملكي ناعم',
-                price: 1750,
-                category: 'خاتم',
-                image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&auto=format&fit=crop&q=60'
-            }
+        const allProducts = [
+            { _id: '1', name: 'أسورة لؤلؤ فاخرة', description: 'أسورة أنيقة تناسب السهرات والمناسبات', price: 1200, category: 'أسورة', image: 'images/bracelet/bracelet1.jpg' },
+            { _id: '2', name: 'أسورة ذهبية عصرية', description: 'تصميم أنيق مرصع بأحجار كريمة', price: 1350, category: 'أسورة', image: 'images/bracelet/bracelet2.jpg' },
+            { _id: '3', name: 'أسورة ملكية', description: 'لمسة فاخرة لإطلالة مميزة', price: 1600, category: 'أسورة', image: 'images/bracelet/bracelet3.jpg' },
+            { _id: '4', name: 'سلسلة ذهبية أنيقة', description: 'سلسلة مميزة بتصميم عصري راقي', price: 2200, category: 'سلسلة', image: 'images/chain/chain1.jpg' },
+            { _id: '5', name: 'سلسلة رقيقة بدلاية', description: 'سلسلة ناعمة يومية تناسب كل الأوقات', price: 1900, category: 'سلسلة', image: 'images/chain/chain2.jpg' },
+            { _id: '6', name: 'سلسلة كلاسيكية', description: 'تصميم فاخر من الذهب الخالص', price: 2500, category: 'سلسلة', image: 'images/chain/chain3.jpg' },
+            { _id: '7', name: 'خاتم ألماس فاخر', description: 'خاتم مرصع بفصوص الزريكون البراقة', price: 1500, category: 'خاتم', image: 'images/gold/gold1.jpg' }
         ];
 
         let cart = [];
@@ -166,13 +118,21 @@
             const p = allProducts.find(item => item._id === id);
             if (p) {
                 cart.push(p);
-                const countElem = document.getElementById('cart-count');
-                const totalElem = document.getElementById('cart-total');
-                const itemsElem = document.getElementById('cart-items');
+                updateCartUI();
+            }
+        }
 
-                if (countElem) countElem.innerText = cart.length;
-                if (totalElem) totalElem.innerText = cart.reduce((sum, item) => sum + item.price, 0) + ' ج.م';
-                if (itemsElem) {
+        function updateCartUI() {
+            const countElem = document.getElementById('cart-count');
+            const totalElem = document.getElementById('cart-total');
+            const itemsElem = document.getElementById('cart-items');
+
+            if (countElem) countElem.innerText = cart.length;
+            if (totalElem) totalElem.innerText = cart.reduce((sum, item) => sum + item.price, 0) + ' ج.م';
+            if (itemsElem) {
+                if (cart.length === 0) {
+                    itemsElem.innerHTML = '<p class="empty-msg">السلة فارغة حالياً</p>';
+                } else {
                     itemsElem.innerHTML = cart.map(item => `
                         <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                             <span>${item.name}</span>
@@ -180,6 +140,55 @@
                         </div>
                     `).join('');
                 }
+            }
+        }
+
+        // دالة تجميع البيانات واستدعاء الـ API عند إتمام الشراء
+        async function handleCheckout() {
+            if (cart.length === 0) {
+                alert('السلة فارغة!');
+                return;
+            }
+
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const address = document.getElementById('cust-address').value;
+
+            if (!name || !phone || !address) {
+                alert('يرجى ملء كافة بيانات الطلب.');
+                return;
+            }
+
+            const customerDetails = { name, phone, address };
+            await submitOrder(cart, customerDetails);
+        }
+
+        // دالة الاتصال بالباك إند عبر POST Request
+        async function submitOrder(cartItems, customerDetails) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        items: cartItems,
+                        customer: customerDetails
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('تم إرسال طلبك بنجاح! وسنتواصل معك قريباً.');
+                    cart = [];
+                    updateCartUI();
+                    toggleCart();
+                } else {
+                    alert('حدث خطأ أثناء إرسال الطلب: ' + (data.message || 'خطأ بالسيرفر'));
+                }
+            } catch (error) {
+                console.error('فشل الاتصال بالسيرفر:', error);
+                alert('تعذر الاتصال بالسيرفر. يرجى المحاولة لاحقاً.');
             }
         }
 

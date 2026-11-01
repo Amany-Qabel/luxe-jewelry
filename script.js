@@ -1,3 +1,4 @@
+const API_BASE_URL = 'https://amany-jewelry.vercel.app/api';
 let allProducts = [];
 let cart = [];
 
