@@ -6,12 +6,11 @@ require('dotenv').config();
 
 const app = express();
 
-// 1. إعدادات CORS للحماية
+// إعدادات CORS المفتوحة لتجنب أي حظر للطلبات القادمة من المتجر أو لوحة التحكم
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // 2. Rate Limiting لحماية الـ API
@@ -81,7 +80,7 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-// إضافة منتج جديد (مع رسالة خطأ مفصلة للاكتشاف السريع)
+// إضافة منتج جديد (للأدمن)
 app.post('/api/admin/products', async (req, res) => {
     try {
         const newProduct = new Product(req.body);
@@ -103,7 +102,7 @@ app.delete('/api/admin/products/:id', async (req, res) => {
     }
 });
 
-// تسجل طلب جديد (من العميل)
+// تسجيل طلب جديد (من العميل)
 app.post('/api/orders', async (req, res) => {
     try {
         const { items, customer } = req.body;
