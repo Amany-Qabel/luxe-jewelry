@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://amany-jewelry.vercel.app/api';
+const API_BASE_URL = 'https://luxe-jewelry-eight.vercel.app/api';
 
 // التحقق عند تحميل الصفحة لو الأدمن مسجل دخوله مسبقاً
 document.addEventListener('DOMContentLoaded', () => {
@@ -90,7 +90,7 @@ async function loadProducts() {
     }
 }
 
-// إضافة منتج جديد
+// إضافة منتج جديد (مع إظهار سبب الخطأ بدقة لو حدث)
 async function handleAddProduct(event) {
     event.preventDefault();
 
@@ -116,11 +116,12 @@ async function handleAddProduct(event) {
             loadProducts();
             switchTab('products');
         } else {
-            alert('فشل إضافة المنتج.');
+            // عرض تفاصيل الخطأ القادم من السيرفر مباشرة
+            alert('خطأ من السيرفر: ' + (data.error || 'فشل إضافة المنتج.'));
         }
     } catch (err) {
         console.error('خطأ:', err);
-        alert('حدث خطأ أثناء الإضافة.');
+        alert('حدث خطأ أثناء الاتصال.');
     }
 }
 
