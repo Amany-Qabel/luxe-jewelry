@@ -6,9 +6,9 @@ require('dotenv').config();
 
 const app = express();
 
-// 1. إعدادات CORS للحماية (السماح بالوصول من متجرك ولوحة التحكم)
+// 1. إعدادات CORS للحماية
 app.use(cors({
-    origin: '*', // السماح بالاتصال من أي نطاق (أو يمكنك تخصيصه لموقعك)
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
@@ -33,7 +33,6 @@ mongoose.connect(process.env.MONGO_URI)
 // Schemas & Models (نماذج البيانات)
 // ----------------------------------------------------
 
-// نموذج الطلبات (Order Schema)
 const orderSchema = new mongoose.Schema({
     customer: {
         name: String,
@@ -46,7 +45,6 @@ const orderSchema = new mongoose.Schema({
 });
 const Order = mongoose.model('Order', orderSchema);
 
-// نموذج المنتجات (Product Schema)
 const productSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: String,
@@ -62,7 +60,6 @@ const Product = mongoose.model('Product', productSchema);
 // API Routes (المسارات)
 // ----------------------------------------------------
 
-// كلمة مرور لوحة التحكم
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "luxeAdmin2026";
 
 // 🔑 مسار تسجيل دخول الأدمن
@@ -74,8 +71,6 @@ app.post('/api/admin/login', (req, res) => {
     return res.status(401).json({ success: false, message: 'كلمة المرور غير صحيحة' });
 });
 
-// 🛒 مسارات المنتجات (Products API)
-
 // جلب جميع المنتجات
 app.get('/api/products', async (req, res) => {
     try {
@@ -86,14 +81,15 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-// إضافة منتج جديد (للأدمن)
+// إضافة منتج جديد (مع رسالة خطأ مفصلة للاكتشاف السريع)
 app.post('/api/admin/products', async (req, res) => {
     try {
         const newProduct = new Product(req.body);
         await newProduct.save();
         res.status(201).json({ success: true, product: newProduct });
     } catch (err) {
-        res.status(400).json({ error: 'فشل إضافة المنتج' });
+        console.error('تفاصيل خطأ الإضافة:', err.message);
+        res.status(400).json({ success: false, error: err.message });
     }
 });
 
@@ -107,9 +103,7 @@ app.delete('/api/admin/products/:id', async (req, res) => {
     }
 });
 
-// 📦 مسارات الطلبات (Orders API)
-
-// تسجيل طلب جديد (من العميل)
+// تسجل طلب جديد (من العميل)
 app.post('/api/orders', async (req, res) => {
     try {
         const { items, customer } = req.body;
