@@ -3,91 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم | LUXE JEWELRY</title>
+    <title>لوحة التحكم | LUXE JEWELRY Admin</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .admin-container { max-width: 1000px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom: 12px; }
+        .admin-container { max-width: 1000px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .login-box { max-width: 400px; margin: 80px auto; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: center; background: #fff; }
+        .form-group { margin-bottom: 15px; text-align: right; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
-        .admin-btn { background: #d4af37; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .admin-btn:hover { background: #b89528; }
-        .orders-table, .products-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .orders-table th, .orders-table td, .products-table th, .products-table td { border: 1px solid #eee; padding: 10px; text-align: center; }
-        .orders-table th, .products-table th { background: #f8f6f0; }
-        .del-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .btn-submit { background: #d4af37; color: white; border: none; padding: 12px; font-weight: bold; width: 100%; border-radius: 5px; cursor: pointer; }
+        .btn-danger { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .tabs { display: flex; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
+        .tab-btn { padding: 10px 20px; border: none; background: none; font-size: 1rem; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { border-bottom: 3px solid #d4af37; color: #d4af37; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 12px; text-align: right; }
+        th { background-color: #f8f9fa; }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="logo"><h1>LUXE JEWELRY - لوحة التحكم</h1></div>
-        <a href="index.html" style="text-decoration: none; color: #333; font-weight: bold;">العودة للمتجر 🛒</a>
-    </header>
 
-    <div class="admin-container">
-        <h2>إضافة منتج جديد</h2>
-        <form id="add-product-form" onsubmit="handleAddProduct(event)">
-            <div class="form-group">
-                <label>اسم القطعة:</label>
-                <input type="text" id="prod-name" required>
-            </div>
-            <div class="form-group">
-                <label>القسم:</label>
-                <select id="prod-category" required>
-                    <option value="خاتم">خاتم</option>
-                    <option value="سلسلة">سلسلة</option>
-                    <option value="أسورة">أسورة</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>السعر (ج.م):</label>
-                <input type="number" id="prod-price" required>
-            </div>
-            <div class="form-group">
-                <label>الوصف:</label>
-                <textarea id="prod-desc" rows="2"></textarea>
-            </div>
-            <div class="form-group">
-                <label>رابط الصورة المباشر:</label>
-                <input type="text" id="prod-image" placeholder="http://localhost:5000/images/gold/gold1.jpg.jpg" required>
-            </div>
-            <button type="submit" class="admin-btn">حفظ وإضافة المنتج</button>
-        </form>
-
-        <hr style="margin: 40px 0;">
-
-        <h2>قائمة المنتجات الحالية</h2>
-        <table class="products-table">
-            <thead>
-                <tr>
-                    <th>الصورة</th>
-                    <th>الاسم</th>
-                    <th>القسم</th>
-                    <th>السعر</th>
-                    <th>إجراء</th>
-                </tr>
-            </thead>
-            <tbody id="products-list-admin"></tbody>
-        </table>
-
-        <hr style="margin: 40px 0;">
-
-        <h2>طلبات العملاء الواردة</h2>
-        <table class="orders-table">
-            <thead>
-                <tr>
-                    <th>اسم العميل</th>
-                    <th>رقم الهاتف</th>
-                    <th>العنوان</th>
-                    <th>القطع المطلوبة</th>
-                    <th>الإجمالي</th>
-                    <th>التاريخ</th>
-                </tr>
-            </thead>
-            <tbody id="orders-list-admin"></tbody>
-        </table>
+    <!-- 🔒 شاشة تسجيل الدخول -->
+    <div id="login-section" class="login-box">
+        <h2>تسجيل دخول المدير</h2>
+        <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">أدخلي كلمة المرور للوصول للوحة التحكم</p>
+        <div class="form-group">
+            <input type="password" id="admin-password" placeholder="كلمة المرور">
+        </div>
+        <button class="btn-submit" onclick="loginAdmin()">دخول</button>
     </div>
 
+    <!-- 📊 لوحة التحكم الرئيسية -->
+    <div id="dashboard-section" class="admin-container" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>لوحة إدارة LUXE JEWELRY</h2>
+            <button onclick="logoutAdmin()" style="background: #7f8c8d; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">تسجيل الخروج</button>
+        </div>
+
+        <!-- التبويبات -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('products')">إدارة المنتجات</button>
+            <button class="tab-btn" onclick="switchTab('add-product')">إضافة منتج جديد</button>
+            <button class="tab-btn" onclick="switchTab('orders')">طلبات العملاء</button>
+        </div>
+
+        <!-- 1. قائمة المنتجات -->
+        <div id="tab-products" class="tab-content">
+            <h3>المنتجات الحالية</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>الصورة</th>
+                        <th>اسم المنتج</th>
+                        <th>القسم</th>
+                        <th>السعر</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="products-table-body">
+                    <!-- سيتم تحميل المنتجات هنا عبر JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 2. إضافة منتج جديد -->
+        <div id="tab-add-product" class="tab-content" style="display: none;">
+            <h3>إضافة قطعة جديدة للمتجر</h3>
+            <form id="add-product-form" onsubmit="handleAddProduct(event)">
+                <div class="form-group">
+                    <label>اسم المنتج:</label>
+                    <input type="text" id="prod-name" required>
+                </div>
+                <div class="form-group">
+                    <label>القسم:</label>
+                    <select id="prod-category" required>
+                        <option value="خاتم">خاتم</option>
+                        <option value="سلسلة">سلسلة</option>
+                        <option value="أسورة">أسورة</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>السعر (ج.م):</label>
+                    <input type="number" id="prod-price" required>
+                </div>
+                <div class="form-group">
+                    <label>الوصف:</label>
+                    <textarea id="prod-desc" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>رابط الصورة (Image URL):</label>
+                    <input type="text" id="prod-image" placeholder="مثال: images/chain/chain1.jpg أو رابط مباشر" required>
+                </div>
+                <button type="submit" class="btn-submit">حفظ وإضافة للمتجر</button>
+            </form>
+        </div>
+
+        <!-- 3. قائمة الطلبات -->
+        <div id="tab-orders" class="tab-content" style="display: none;">
+            <h3>سجل طلبات العملاء المسجلة</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>اسم العميل</th>
+                        <th>الهاتف</th>
+                        <th>العنوان</th>
+                        <th>الإجمالي</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                    <!-- سيتم تحميل الطلبات هنا عبر JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- كود التحكم البرمجي -->
     <script src="admin.js"></script>
 </body>
 </html>

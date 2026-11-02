@@ -1,36 +1,100 @@
-const API_URL = '/api';
+const API_BASE_URL = 'https://amany-jewelry.vercel.app/api';
 
-// جلب المنتجات والطلبات فور فتح الصفحة
+// التحقق عند تحميل الصفحة لو الأدمن مسجل دخوله مسبقاً
 document.addEventListener('DOMContentLoaded', () => {
-    loadAdminProducts();
-    loadAdminOrders();
+    if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+        showDashboard();
+    }
 });
 
-// جلب وعرض المنتجات في لوحة التحكم
-async function loadAdminProducts() {
+// تسجيل دخول الأدمن
+async function loginAdmin() {
+    const password = document.getElementById('admin-password').value;
+    if (!password) {
+        alert('يرجى إدخال كلمة المرور.');
+        return;
+    }
+
     try {
-        const res = await fetch(`${API_URL}/products`);
+        const res = await fetch(`${API_BASE_URL}/admin/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            sessionStorage.setItem('adminLoggedIn', 'true');
+            showDashboard();
+        } else {
+            alert('كلمة المرور غير صحيحة!');
+        }
+    } catch (error) {
+        console.error('خطأ في الاتصال:', error);
+        alert('حدث خطأ أثناء الاتصال بالسيرفر.');
+    }
+}
+
+// تسجيل الخروج
+function logoutAdmin() {
+    sessionStorage.removeItem('adminLoggedIn');
+    document.getElementById('dashboard-section').style.display = 'none';
+    document.getElementById('login-section').style.display = 'block';
+}
+
+// إظهار لوحة التحكم وتحميل البيانات
+function showDashboard() {
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('dashboard-section').style.display = 'block';
+    loadProducts();
+    loadOrders();
+}
+
+// التنقل بين التبويبات
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+    document.getElementById(`tab-${tabName}`).style.display = 'block';
+    event.target.classList.add('active');
+}
+
+// جلب وعرض المنتجات
+async function loadProducts() {
+    try {
+        const res = await fetch(`${API_BASE_URL}/products`);
         const products = await res.json();
-        const tbody = document.getElementById('products-list-admin');
-        
+
+        const tbody = document.getElementById('products-table-body');
+        if (!tbody) return;
+
+        if (products.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">لا توجد منتجات مسجلة حتى الآن.</td></tr>';
+            return;
+        }
+
         tbody.innerHTML = products.map(p => `
             <tr>
-                <td><img src="${p.image}" width="50" height="50" style="object-fit:cover; border-radius: 4px;"></td>
-                <td>${p.name}</td>
-                <td>${p.category || '-'}</td>
+                <td><img src="${p.image}" width="50" height="50" style="object-fit:cover; border-radius:4px;" onerror="this.src='https://via.placeholder.com/50'"></td>
+                <td><strong>${p.name}</strong></td>
+                <td>${p.category}</td>
                 <td>${p.price} ج.م</td>
-                <td><button class="del-btn" onclick="deleteProduct('${p._id}')">حذف</button></td>
+                <td>
+                    <button class="btn-danger" onclick="deleteProduct('${p._id}')">حذف</button>
+                </td>
             </tr>
         `).join('');
     } catch (err) {
-        console.error('خطأ في تحميل المنتجات:', err);
+        console.error('فشل تحميل المنتجات:', err);
     }
 }
 
 // إضافة منتج جديد
 async function handleAddProduct(event) {
     event.preventDefault();
-    const newProd = {
+
+    const productData = {
         name: document.getElementById('prod-name').value,
         category: document.getElementById('prod-category').value,
         price: Number(document.getElementById('prod-price').value),
@@ -39,58 +103,72 @@ async function handleAddProduct(event) {
     };
 
     try {
-        const res = await fetch(`${API_URL}/products`, {
+        const res = await fetch(`${API_BASE_URL}/admin/products`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newProd)
+            body: JSON.stringify(productData)
         });
-        if (res.ok) {
-            alert('تمت إضافة المنتج بنجاح! 🎉');
+
+        const data = await res.json();
+        if (data.success) {
+            alert('تم إضافة المنتج بنجاح! 🎉');
             document.getElementById('add-product-form').reset();
-            loadAdminProducts();
+            loadProducts();
+            switchTab('products');
+        } else {
+            alert('فشل إضافة المنتج.');
         }
     } catch (err) {
-        alert('حدث خطأ أثناء إضافة المنتج.');
+        console.error('خطأ:', err);
+        alert('حدث خطأ أثناء الإضافة.');
     }
 }
 
 // حذف منتج
 async function deleteProduct(id) {
-    if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
+    if (!confirm('هل أنتِ متأكدة من حذف هذا المنتج؟')) return;
+
     try {
-        const res = await fetch(`${API_URL}/products/${id}`, { method: 'DELETE' });
-        if (res.ok) {
-            alert('تم حذف المنتج بنجاح!');
-            loadAdminProducts();
+        const res = await fetch(`${API_BASE_URL}/admin/products/${id}`, {
+            method: 'DELETE'
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            alert('تم حذف المنتج بنجاح.');
+            loadProducts();
+        } else {
+            alert('فشل حذف المنتج.');
         }
     } catch (err) {
-        alert('حدث خطأ أثناء الحذف.');
+        console.error('خطأ:', err);
     }
 }
 
 // جلب وعرض طلبات العملاء
-async function loadAdminOrders() {
+async function loadOrders() {
     try {
-        const res = await fetch(`${API_URL}/orders`);
+        const res = await fetch(`${API_BASE_URL}/admin/orders`);
         const orders = await res.json();
-        const tbody = document.getElementById('orders-list-admin');
+
+        const tbody = document.getElementById('orders-table-body');
+        if (!tbody) return;
 
         if (orders.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6">لا توجد طلبات واردة حتى الآن.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">لا توجد طلبات مسجلة حتى الآن.</td></tr>';
             return;
         }
 
         tbody.innerHTML = orders.map(o => `
             <tr>
-                <td>${o.customer?.name || '-'}</td>
-                <td>${o.customer?.phone || '-'}</td>
-                <td>${o.customer?.address || '-'}</td>
-                <td>${o.items ? o.items.map(i => i.name).join(', ') : '-'}</td>
-                <td><strong>${o.totalAmount} ج.م</strong></td>
                 <td>${new Date(o.createdAt).toLocaleDateString('ar-EG')}</td>
+                <td>${o.customer ? o.customer.name : 'غير محدد'}</td>
+                <td>${o.customer ? o.customer.phone : '-'}</td>
+                <td>${o.customer ? o.customer.address : '-'}</td>
+                <td><strong style="color:#d4af37;">${o.totalPrice} ج.م</strong></td>
             </tr>
         `).join('');
     } catch (err) {
-        console.error('خطأ في تحميل الطلبات:', err);
+        console.error('فشل تحميل الطلبات:', err);
     }
 }
